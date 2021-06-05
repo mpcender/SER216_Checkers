@@ -1,14 +1,16 @@
-## Getting Started
+## Checkers Board Game Project
 
-Welcome to the VS Code Java world. Here is a guideline to help you get started to write Java code in Visual Studio Code.
+This project was an ongoing project for SER216 to build a functional checkers 
+game. Each module required the addition of improved functionality including 
+computer player and JavaFX GUI.
 
 ## Folder Structure
 
-The workspace contains two folders by default, where:
+The workspace contains three primary folders
 
 - `src`: the folder to maintain sources
+  - `core`: Game logic and components
+  - `ui`: User interface modules
+  - `docs`: Generated Javadoc
 - `lib`: the folder to maintain dependencies
-
-## Dependency Management
-
-The `JAVA DEPENDENCIES` view allows you to manage your dependencies. More details can be found [here](https://github.com/microsoft/vscode-java-pack/blob/master/release-notes/v0.9.0.md#work-with-jar-files-directly).
+- `res`: png and jpg sources for checkers objects
