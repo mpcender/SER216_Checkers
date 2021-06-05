@@ -76,8 +76,6 @@ public class CheckersLogic {
 //-----------------------------------------------------------------------------
 	/**
 	 * CheckersLogic handles and executes the game logic of checkers
-	 * @param playerName	string array containing the name identified of each 
-	 * 						player
 	 */
 	public CheckersLogic() {
 	}
@@ -106,7 +104,10 @@ public class CheckersLogic {
 	/**
 	 * Generates newgame state, creates players, builds new chips with 
 	 * appropriate movesets, and maps to the board.
-	 * @return	return the current state of the board
+	 * 
+	 * @param playerName		Human player name input
+	 * @param computerOpponent	if {@code true} computer opponent active
+	 * @return					return the current state of the board
 	 */
 	public char[][] startGame(String[] playerName, boolean computerOpponent) {
 		this.players = new Player[MAX_PLAYERS];
@@ -119,16 +120,21 @@ public class CheckersLogic {
 			//System.out.println("start comp: " + computerOpponent + " rand: " + i);
 			// Coin toss who goes first
 			if (i < 1){ 
-				this.players[0] = new Player(playerName[0], 0, PLAYER_START_CHIPS, false);
-				this.players[1] = new CheckersComputerPlayer("HAL", 1, PLAYER_START_CHIPS, true);
+				this.players[0] = 
+					new Player(playerName[0], 0, PLAYER_START_CHIPS, false);
+				this.players[1] = 
+					new CheckersComputerPlayer(playerName[1], 1, PLAYER_START_CHIPS, true);
 			} else {
-				this.players[0] = new CheckersComputerPlayer("HAL ", 0, PLAYER_START_CHIPS, true);
-				this.players[1] = new Player(playerName[0], 1, PLAYER_START_CHIPS, false);
+				this.players[0] = 
+					new CheckersComputerPlayer(playerName[1], 0, PLAYER_START_CHIPS, true);
+				this.players[1] = 
+					new Player(playerName[0], 1, PLAYER_START_CHIPS, false);
 			}
 		} else {
 			// Initialize players
 			for (int i = 0; i < MAX_PLAYERS; i++) {
-				this.players[i] = new Player(playerName[i], i+1, PLAYER_START_CHIPS, false);
+				this.players[i] = 
+					new Player(playerName[i], i+1, PLAYER_START_CHIPS, false);
 			}
 		}
 		
@@ -209,7 +215,7 @@ public class CheckersLogic {
 
 	/**
 	 * Determines if current player is a computer
-	 * @return
+	 * @return	{@code true} if current player is the computer
 	 */
 	public boolean isComputerTurn() {
 		return players[activePlayer].isComputer();
@@ -218,6 +224,7 @@ public class CheckersLogic {
 
 	/**
 	 * Propts computer player to make move
+	 * @return	{@code char[][]} with updated board state after computer move
 	 */
 	public char[][] computerMove() {
 		// if player is not computer throw error
@@ -387,7 +394,6 @@ public class CheckersLogic {
 		} else {
 			activePlayer = 0;
 		}
-
 	}
 
 	/**
@@ -511,9 +517,4 @@ public class CheckersLogic {
 		players[0].resetChips(PLAYER_START_CHIPS);
 		players[1].resetChips(PLAYER_START_CHIPS);
 	}
-
-
-
-	
-
 }

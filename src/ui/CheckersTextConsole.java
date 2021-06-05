@@ -9,7 +9,7 @@ package ui;
 
 //import java.awt.Point;
 import java.util.Scanner;
-import java.util.concurrent.TimeUnit;
+//import java.util.concurrent.TimeUnit;
 
 import core.CheckersLogic;
 import java.awt.Point;
@@ -37,8 +37,7 @@ public class CheckersTextConsole {
 	*/
 
 	// Player variables
-	private static final String player1 = "Player X";
-	private static final String player2 = "Player O";
+	private static String[] players = new String[2];
 
 	// Game Board Active Game Variables
 	private static char[][] gameBoard;
@@ -56,14 +55,21 @@ public class CheckersTextConsole {
 		keepPlaying = true;
 
 		// Set player names (modify to allow user input?)
-		String[] players = {player1, player2};
+		
 		// Instantiate checkers game logic
 		checkersGame = new CheckersLogic();
-		
 
+		computerPlayer = playAgainstComputer();
+		if (computerPlayer) { 
+			players[0] = "Player"; players[1] = "Computer";
+		} else {
+			players[0] = "Player X"; players[1] = "Player O";
+		}
+		
 		while (keepPlaying) {
-			computerPlayer = playAgainstComputer();
+			
 			gameBoard = checkersGame.startGame(players, computerPlayer);
+
 
 			gameActive = true;
 			printBoard(gameBoard);
@@ -90,23 +96,28 @@ public class CheckersTextConsole {
 	 * Prompts and accepts user input
 	 */
 	private static void getUserInput(){
-		// Promt player for input
-		System.out.println(checkersGame.getPlayer() + " – your turn." + 
-		"\nChoose a cell position of piece to be moved and the new position." +
-		"e.g., 3a-4b ");
+		
 
 		//System.out.println("comp: " + computerPlayer + " - isTurn: "+ checkersGame.isComputerTurn());
 		// Short circuit if local computer variable false
 		if (computerPlayer && checkersGame.isComputerTurn()) {
+			System.out.println("Computer moving BEEP BOOP BOOP");
 			// Timout for 3 sec on comp move to make output more human readable
+			/*
 			try {
 				TimeUnit.SECONDS.sleep(3);
 			} catch (InterruptedException e) {
 				Thread.currentThread().interrupt();
 			}
+			*/
 			// update game board with computer move
 			gameBoard = checkersGame.computerMove();
 		} else {
+			// Promt player for input
+			System.out.println(checkersGame.getPlayer() + " – your turn." + 
+			"\nChoose a cell position of piece to be moved and the new " +
+			"position. e.g., 3a-4b ");
+
 			Point[] movePoints = null;
 			String userMove;
 			// Continue to accept input until a valid input is provided
@@ -172,17 +183,18 @@ public class CheckersTextConsole {
 	 * 
 	 */
 	private static void printStats() {
+
 		int[][] records = checkersGame.getPlayerStats();
 		printLine();
 		System.out.print("\n          G   A   M   E     O   V   E   R\n\n");
 		printLine();
 		System.out.print("\n");
-		System.out.print("     " + player1 + 
+		System.out.print("     " + players[0] + 
 						"\n          Win : " + records[0][0] +
 						"\n          Loss: " + records[0][1] +
 						"\n          Draw: " + records[0][2]);
 		System.out.print("\n");
-		System.out.print("     " + player2 + 
+		System.out.print("     " + players[1] + 
 						"\n          Win : " + records[1][0] +
 						"\n          Loss: " + records[1][1]+
 						"\n          Draw: " + records[1][2]);
