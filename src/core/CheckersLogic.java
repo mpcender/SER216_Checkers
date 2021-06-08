@@ -77,7 +77,34 @@ public class CheckersLogic {
 	/**
 	 * CheckersLogic handles and executes the game logic of checkers
 	 */
-	public CheckersLogic() {
+	public CheckersLogic(String[] playerName, boolean computerOpponent) {
+		this.players = new Player[MAX_PLAYERS];
+
+		// check if opponent is computer or human
+		if (computerOpponent) {
+			Random rand = new Random();
+			int i = rand.nextInt(2);
+
+			//System.out.println("start comp: " + computerOpponent + " rand: " + i);
+			// Coin toss who goes first
+			if (i < 1){ 
+				this.players[0] = 
+					new Player(playerName[0], 0, PLAYER_START_CHIPS, PIECE_TYPES[0], false);
+				this.players[1] = 
+					new CheckersComputerPlayer(playerName[1], 1, PLAYER_START_CHIPS, PIECE_TYPES[1], true);
+			} else {
+				this.players[0] = 
+					new CheckersComputerPlayer(playerName[1], 0, PLAYER_START_CHIPS, PIECE_TYPES[0], true);
+				this.players[1] = 
+					new Player(playerName[0], 1, PLAYER_START_CHIPS, PIECE_TYPES[1], false);
+			}
+		} else {
+			// Initialize players
+			for (int i = 0; i < MAX_PLAYERS; i++) {
+				this.players[i] = 
+					new Player(playerName[i], i+1, PLAYER_START_CHIPS, PIECE_TYPES[i], false);
+			}
+		}
 	}
 
 //-----------------------------------------------------------------------------
@@ -91,6 +118,21 @@ public class CheckersLogic {
 		return players[activePlayer].getName();
 	}
 
+	/**
+	 * returns the current active player chip type
+	 * @return 	returns the active players chip type
+	 */
+	public char getPlayerChip() {
+		return players[activePlayer].getChipType();
+	}
+
+	public String[] getPLayerNames() {
+		String[] playerStr = new String[2];
+		playerStr[0] = this.players[0].getName();
+		playerStr[1] = this.players[1].getName();
+		return playerStr;
+	}
+
 
 	/**
 	 * Returns the current state of the game board
@@ -101,7 +143,7 @@ public class CheckersLogic {
 	}
 
 
-	/**
+	/*
 	 * Generates newgame state, creates players, builds new chips with 
 	 * appropriate movesets, and maps to the board.
 	 * 
@@ -109,36 +151,8 @@ public class CheckersLogic {
 	 * @param computerOpponent	if {@code true} computer opponent active
 	 * @return					return the current state of the board
 	 */
-	public char[][] startGame(String[] playerName, boolean computerOpponent) {
-		this.players = new Player[MAX_PLAYERS];
-
-		// check if opponent is computer or human
-		if (computerOpponent) {
-			Random rand = new Random();
-			int i = rand.nextInt(2);
-
-			//System.out.println("start comp: " + computerOpponent + " rand: " + i);
-			// Coin toss who goes first
-			if (i < 1){ 
-				this.players[0] = 
-					new Player(playerName[0], 0, PLAYER_START_CHIPS, false);
-				this.players[1] = 
-					new CheckersComputerPlayer(playerName[1], 1, PLAYER_START_CHIPS, true);
-			} else {
-				this.players[0] = 
-					new CheckersComputerPlayer(playerName[1], 0, PLAYER_START_CHIPS, true);
-				this.players[1] = 
-					new Player(playerName[0], 1, PLAYER_START_CHIPS, false);
-			}
-		} else {
-			// Initialize players
-			for (int i = 0; i < MAX_PLAYERS; i++) {
-				this.players[i] = 
-					new Player(playerName[i], i+1, PLAYER_START_CHIPS, false);
-			}
-		}
+	public char[][] startGame() {
 		
-
 		// Initialize Board with Chip types, positions, and owners.
 		this.gameBoard = new Board(INIT_BOARD, PIECE_TYPES, 
 									MOVESETS, this.players);
@@ -226,7 +240,8 @@ public class CheckersLogic {
 	 * Propts computer player to make move
 	 * @return	{@code char[][]} with updated board state after computer move
 	 */
-	public char[][] computerMove() {
+	public Point[] computerMove() {
+		Point[] compMove = null;
 		// if player is not computer throw error
 		try {
 			CheckersComputerPlayer comp = (CheckersComputerPlayer)players[activePlayer];
@@ -252,7 +267,7 @@ public class CheckersLogic {
 			}
 			while (!validMoveIndex.isEmpty());
 			
-			Point[] compMove = comp.makeMove(gameBoard, moves);
+			compMove = comp.makeMove(gameBoard, moves);
 			isAttack(compMove[0], compMove[1]);
 
 			// give computer moveset and board, submit move.
@@ -267,7 +282,7 @@ public class CheckersLogic {
 			System.out.println("Computer move array access out of bounds");
 		} 
 		
-		return getCurrentState();
+		return compMove;
 	}
 
 //-----------------------------------------------------------------------------
@@ -504,7 +519,7 @@ public class CheckersLogic {
 			players[0].setDraw();
 			players[1].setDraw();
 		} 
-		// Player with the most chips let wins the game
+		// Player with the most chips left wins the game
 		else if (players[0].getChips() > players[1].getChips()) {
 			players[0].setWin();
 			players[1].setLoss();

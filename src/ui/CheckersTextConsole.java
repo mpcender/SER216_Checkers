@@ -52,41 +52,48 @@ public class CheckersTextConsole {
 //						 		MAIN METHOD
 //-----------------------------------------------------------------------------
 	public static void main(String[] args) {
-		keepPlaying = true;
+		boolean gui = textOrGui();
 
-		// Set player names (modify to allow user input?)
-		
-		// Instantiate checkers game logic
-		checkersGame = new CheckersLogic();
+		if (gui) {
+			CheckersGUI.main(args, 1);
+		}else {
+			keepPlaying = true;
 
-		computerPlayer = playAgainstComputer();
-		if (computerPlayer) { 
-			players[0] = "Player"; players[1] = "Computer";
-		} else {
-			players[0] = "Player X"; players[1] = "Player O";
-		}
-		
-		while (keepPlaying) {
-			
-			gameBoard = checkersGame.startGame(players, computerPlayer);
-
-
-			gameActive = true;
-			printBoard(gameBoard);
-
-			System.out.print("\nBegin Game. ");
-			userIn = new Scanner(System.in);
-			
-			while (gameActive) {
-				// Get user input from active user
-				getUserInput();
-				// Check if game is completed
-				gameActive = !checkersGame.isGameComplete();
+			// Set player names (modify to allow user input?)
+			computerPlayer = playAgainstComputer();
+			if (computerPlayer) { 
+				players[0] = "Player"; players[1] = "Computer";
+			} else {
+				players[0] = "Player X"; players[1] = "Player O";
 			}
 
-			printStats();
-			playAgain();
+			// Instantiate checkers game logic
+			checkersGame = new CheckersLogic(players, computerPlayer);
+
+			while (keepPlaying) {
+
+				gameBoard = checkersGame.startGame();
+
+
+				gameActive = true;
+				printBoard(gameBoard);
+
+				System.out.print("\nBegin Game. ");
+				userIn = new Scanner(System.in);
+
+				while (gameActive) {
+					// Get user input from active user
+					getUserInput();
+					// Check if game is completed
+					gameActive = !checkersGame.isGameComplete();
+				}
+
+				printStats();
+				playAgain();
+			}
 		}
+		
+		
 	}
 
 //-----------------------------------------------------------------------------
@@ -101,7 +108,8 @@ public class CheckersTextConsole {
 		//System.out.println("comp: " + computerPlayer + " - isTurn: "+ checkersGame.isComputerTurn());
 		// Short circuit if local computer variable false
 		if (computerPlayer && checkersGame.isComputerTurn()) {
-			System.out.println("Computer moving BEEP BOOP BOOP");
+			System.out.println("Computer (" + 
+			checkersGame.getPlayerChip() + ") moving BEEP BOOP BOOP");
 			// Timout for 3 sec on comp move to make output more human readable
 			/*
 			try {
@@ -111,10 +119,12 @@ public class CheckersTextConsole {
 			}
 			*/
 			// update game board with computer move
-			gameBoard = checkersGame.computerMove();
+			checkersGame.computerMove();
+			gameBoard = checkersGame.getCurrentState();
 		} else {
 			// Promt player for input
-			System.out.println(checkersGame.getPlayer() + " – your turn." + 
+			System.out.println(checkersGame.getPlayer() + " (" + 
+			checkersGame.getPlayerChip() + ") – your turn." + 
 			"\nChoose a cell position of piece to be moved and the new " +
 			"position. e.g., 3a-4b ");
 
@@ -242,5 +252,28 @@ public class CheckersTextConsole {
 			userReply = userIn.nextLine();
 		}
 		return userReply;
+	}
+
+
+	/**
+	 * 
+	 */
+	private static boolean textOrGui() {
+		System.out.print("GUI or console-based UI? (GUI/CON): ");
+
+		userIn = new Scanner(System.in);
+		String userReply = userIn.nextLine();
+
+		// Continue to accept input until a valid input is provided
+		while(!(userReply.contains("GUI") ^ userReply.contains("CON"))) {
+			System.out.print("Please input a valid response (GUI/CON)");
+			userReply = userIn.nextLine();
+		}
+
+		if (userReply.contains("GUI")){
+			return true;
+		} else {
+			return false;
+		}		
 	}
 }

@@ -16,8 +16,8 @@ public class CheckersComputerPlayer extends Player {
 
     
 
-    public CheckersComputerPlayer(String name, int id, int chips, boolean isComp) {
-        super(name, id, chips, isComp);
+    public CheckersComputerPlayer(String name, int id, int chips, char chipType, boolean isComp) {
+        super(name, id, chips, chipType, isComp);
         //TODO Auto-generated constructor stub
     }
 

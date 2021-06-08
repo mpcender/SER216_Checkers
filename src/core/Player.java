@@ -20,6 +20,8 @@ public class Player {
 	private final int ID;
 	// The number of chips the player has on the board
 	private int chips;
+	// which pieces the player is assigned to
+	private char chipType;
 	// number of wins
 	private int wins;
 	// number of losses
@@ -38,10 +40,11 @@ public class Player {
 	 * @param id		The system defined {@code ID} of the players
 	 * @param chips		The number of chips the player has on the board
 	 */
-	public Player(String name, int id, int chips, boolean isComp){
+	public Player(String name, int id, int chips, char chipType, boolean isComp){
 		this.NAME = name;
 		this.ID = id;
 		this.chips = chips;
+		this.chipType = chipType;
 		this.isComputer = isComp;
 	}
 
@@ -95,6 +98,22 @@ public class Player {
 	 */
 	public void resetChips(int chips) {
 		this.chips = chips;
+	}
+
+	/**
+	 * Provides the chip type assigned to the player
+	 * @return chip type that the player controlls
+	 */
+	public char getChipType() {
+		return this.chipType;
+	}
+
+	/**
+	 * Modifies the chip type assigned to the player
+	 * @param chipType chip type the player controlls
+	 */
+	public void setChipType(char chipType) {
+		this.chipType = chipType;
 	}
 
 
