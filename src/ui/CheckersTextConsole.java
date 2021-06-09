@@ -48,6 +48,11 @@ public class CheckersTextConsole {
 	private static boolean keepPlaying;
 
 
+
+/** 
+ * Text Console Main Method
+ * @param args
+ */
 //-----------------------------------------------------------------------------
 //						 		MAIN METHOD
 //-----------------------------------------------------------------------------

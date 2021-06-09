@@ -19,7 +19,13 @@ public class CheckersGUI extends Application  {
 	private static boolean computerPlayer;
 
 
-    @Override
+    
+	/** 
+	 * Build the initial stage
+	 * @param primaryStage	The main stage base
+	 * @throws Exception	
+	 */
+	@Override
     public void start(Stage primaryStage) throws Exception {
 
         // Create popup for user defined game variables
@@ -44,7 +50,13 @@ public class CheckersGUI extends Application  {
         primaryStage.show();
 		board.init();
     }
-    public static void main(String[] args, int i) {
+    
+	/** 
+	 * Main method for Checkers GUI
+	 * @param args	Arguments
+	 * @param i		Arbitrary overload variable
+	 */
+	public static void main(String[] args, int i) {
         // Launch the application
         launch(args);
     }

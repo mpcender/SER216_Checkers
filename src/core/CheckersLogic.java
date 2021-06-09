@@ -126,6 +126,10 @@ public class CheckersLogic {
 		return players[activePlayer].getChipType();
 	}
 
+	
+	/** 
+	 * @return String[]
+	 */
 	public String[] getPLayerNames() {
 		String[] playerStr = new String[2];
 		playerStr[0] = this.players[0].getName();
@@ -143,6 +147,10 @@ public class CheckersLogic {
 	}
 
 
+	
+	/** 
+	 * @return char[][]
+	 */
 	/*
 	 * Generates newgame state, creates players, builds new chips with 
 	 * appropriate movesets, and maps to the board.

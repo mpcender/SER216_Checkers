@@ -2,7 +2,6 @@ package ui.CheckersGUI_src;
 
 import core.CheckersLogic;
 import static javafx.application.Application.STYLESHEET_CASPIAN;
-
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;

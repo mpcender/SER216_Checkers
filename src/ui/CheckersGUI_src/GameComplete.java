@@ -51,6 +51,10 @@ public class GameComplete {
         dialog.showAndWait();
     }
 
+    
+    /** 
+     * @return GridPane
+     */
     private GridPane drawStage() {
 
         int[][] records = checkersGame.getPlayerStats();
@@ -117,6 +121,11 @@ public class GameComplete {
         return gfinal;
     }
 
+    
+    /** 
+     * @param text
+     * @return Label
+     */
     private Label setStyle(String text) {
         Label label = new Label(text);
         label.setFont(Font.font(STYLESHEET_CASPIAN, FontWeight.BOLD,16));
@@ -124,6 +133,10 @@ public class GameComplete {
         return label;
     }
 
+    
+    /** 
+     * @return GridPane
+     */
     /*
 	private void printStats() {
 
@@ -189,6 +202,10 @@ public class GameComplete {
         return pane;
     }
     
+    
+    /** 
+     * @param button
+     */
     private void newGameClick(Button button){
         button.setOnAction(event -> {
             dialog.close();
@@ -196,6 +213,10 @@ public class GameComplete {
 
         });
     }
+    
+    /** 
+     * @param button
+     */
     private void exitClick(Button button){
         button.setOnAction(event -> {
             Platform.exit();

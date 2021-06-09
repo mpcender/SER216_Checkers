@@ -22,8 +22,8 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 /**
- *
- * @author sephi
+ * Creates New Game screen to setup players
+ * @author Matt Cummings
  */
 public class NewGame {
 
@@ -41,14 +41,27 @@ public class NewGame {
         newGamePopup();
     }
 
+    
+    /** 
+     * Check if computer is active
+     * @return boolean indicating computer participation
+     */
     public boolean isComputer(){
         return isComputer;
     }
 
+    
+    /** 
+     * Get the ordered list of players in the match
+     * @return String[] with player names
+     */
     public String[] getPlayerList() {
         return playerList;
     }
 
+    /**
+     * Method to draw the popup GUI
+     */
     private void newGamePopup() {
         dialog = new Stage();
         dialog.initModality(Modality.APPLICATION_MODAL);
@@ -61,6 +74,11 @@ public class NewGame {
         dialog.showAndWait();
     }
 
+    
+    /** 
+     * Generate sub-components of the popup window
+     * @return GridPane containing the sub-components
+     */
     private GridPane drawStage() {
         playerLabell.setFont(Font.font(STYLESHEET_CASPIAN, 16));
         playerLabel2.setFont(Font.font(STYLESHEET_CASPIAN, 16));
@@ -109,6 +127,23 @@ public class NewGame {
         return gfinal;
     }
 
+    
+    /** 
+     * Generate a 3*6 gridPane 
+     * @param pane      gridPane to be augmented
+     * @param Row_1     Percent height
+     * @param Row_2     Percent height
+     * @param Row_3     Percent height
+     * @param Row_4     Percent height
+     * @param Row_5     Percent height
+     * @param Row_6     Percent height
+     * @param Col_1     Percent width
+     * @param Col_2     Percent width
+     * @param Col_3     Percent width
+     * @param Col_4     Percent width
+     * @param Col_5     Percent width
+     * @return          GridPane with updated row / rol setup
+     */
     private GridPane draw3x6Grid(GridPane pane,
             double Row_1, double Row_2, double Row_3,
             double Row_4, double Row_5, double Row_6,
@@ -152,6 +187,11 @@ public class NewGame {
         return pane;
     }
     
+    
+    /** 
+     * Button handler to proceed to active game board
+     * @param selection The button to set action on
+     */
     private void startGameClick(MenuItem selection){
         selection.setOnAction(event -> {
             String id = ((MenuItem)event.getSource()).getId();
