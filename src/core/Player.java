@@ -39,6 +39,8 @@ public class Player {
 	 * @param name		The user defined name of the player
 	 * @param id		The system defined {@code ID} of the players
 	 * @param chips		The number of chips the player has on the board
+	 * @param chipType	The {@code char} chip type 'x' or 'o'
+	 * @param isComp	{@code true} if the player is a computer
 	 */
 	public Player(String name, int id, int chips, char chipType, boolean isComp){
 		this.NAME = name;
@@ -150,6 +152,7 @@ public class Player {
 
 	/**
 	 * Tells if the player is a computer player
+	 * @return	{@code true} if player is a computer
 	 */
 	public boolean isComputer() {
 		return this.isComputer;

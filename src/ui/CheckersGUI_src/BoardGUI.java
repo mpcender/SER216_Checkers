@@ -29,10 +29,15 @@ import javafx.scene.layout.RowConstraints;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
+import javafx.util.Duration;
+
 import java.awt.Point;
+
+import javafx.animation.TranslateTransition;
 
 /**
  * Board class for In-Between game
@@ -48,6 +53,7 @@ public class BoardGUI {
         new Image("file:src/ui/CheckersGUI_src/res/light_chip.png");
     private final int BOARD_SIZE = 900;
     private final int GRID = 8;
+    private final int CHIP_SIZE = 60;
 
     // Class instances of primary variables
     private Stage primaryStage;
@@ -57,7 +63,7 @@ public class BoardGUI {
     private VBox footerVBox;
     private char[][] gameBoard;
     private CheckersLogic checkersGame;
-    private Button submitButton;
+    private Button closeButton;
     private boolean computerMoving;
 
     //String constants for main stage readouts
@@ -95,12 +101,12 @@ public class BoardGUI {
      * Initial game state checks required after instantiation
      */
     public void init() {
-        submitActionEvent();
+        closeActionEvent();
         checkComputerMove();
     }
 
     /**
-     * Reset the game on GAME OVER -> Player Continue
+     * Reset the game on GAME OVER, prompt Player Continue
      */
     public void resetBoard() {
         new GameComplete(checkersGame);
@@ -115,12 +121,12 @@ public class BoardGUI {
         // Update the scene
         Scene newScene = new Scene(this.rootPane, BOARD_SIZE, BOARD_SIZE);
         // Make background transparent
-        newScene.setFill(null);
+        newScene.setFill(Color.TRANSPARENT);
         // Set scene and show
         primaryStage.setScene(newScene);
         primaryStage.show();
 
-        checkComputerMove();
+        this.init();
     }
 
 
@@ -179,16 +185,18 @@ public class BoardGUI {
         rootPane.add(chipPane, 1, 1);
 
         // Button to exit program
-        submitButton = new Button();
-        submitButton.setGraphic(new ImageView("file:src/ui/CheckersGUI_src/res/x.png"));
-        submitButton.setStyle("-fx-background-color: transparent;\n");
+        closeButton = new Button();
+        closeButton.setGraphic(new ImageView("file:src/ui/CheckersGUI_src/res/x.png"));
+        closeButton.setStyle("-fx-background-color: transparent;\n");
         DropShadow dropShadow = new DropShadow();
         dropShadow.setRadius(2.0);
         dropShadow.setSpread(1);
         dropShadow.setColor(Color.WHEAT);
-        submitButton.setEffect(dropShadow);
-        rootPane.add(submitButton, 2, 0);
+        closeButton.setEffect(dropShadow);
+        rootPane.add(closeButton, 2, 0);
 
+
+        // GRIDLINES
         //rootPane.setGridLinesVisible(true);
         //chipPane.setGridLinesVisible(true);
    
@@ -210,11 +218,12 @@ public class BoardGUI {
         dropShadow.setOffsetY(4.0); 
         ImageView chip = new ImageView(img);
         chip.setEffect(dropShadow);
-        chip.setFitHeight(60);
-        chip.setFitWidth(60);
+        chip.setFitHeight(CHIP_SIZE);
+        chip.setFitWidth(CHIP_SIZE);
         chip.setX(x);
         chip.setY(y);
         dragChip(chip);
+        checkKinged(chip);
         return chip;
     }
 
@@ -354,26 +363,67 @@ public class BoardGUI {
     private void checkComputerMove() {
         
         if (checkersGame.isComputerTurn()) {
-            
             computerMoving = true;
+
+            this.rootPane.getChildren().remove(this.footerVBox);
+            this.footerVBox = drawFooter(currentPlayer);
+            rootPane.add(this.footerVBox, 0, 2, 3, 1);
+
             Point[] move = checkersGame.computerMove();
 
             // Get node at index of move origin
             Node node = getNodeByRowColumnIndex(move[0].x,move[0].y,chipPane);
+            //((ImageView) node).
+
             // Build new chip at location of move destination
             ImageView newChip = chipBuilder(((ImageView) node).getImage(), move[1].y,move[1].x);
             // Remove origin chip
             chipPane.getChildren().remove(node);
+
+            // Animate chip movement
+            // size of each grid square
+            double mod = (BOARD_SIZE-(BOARD_SIZE*(2.0/15.0)))/GRID;
+            //PathTransition trans = new PathTransition();
+            TranslateTransition trans = new TranslateTransition();
+            // Set from location to original location of node
+            trans.setFromX((move[0].y-move[1].y)*mod);
+            trans.setFromY((move[0].x-move[1].x)*mod);
+            // Set to location to the location of the new node
+            trans.setByX(-1*(move[0].y-move[1].y)*mod);
+            trans.setByY(-1*(move[0].x-move[1].x)*mod);
+            trans.setNode(newChip);
+            trans.setDuration(Duration.seconds(1));
+            // Draws invisible rectangle to further prevent player from 
+            // moving chips before animation completes.
+            Rectangle rect = new Rectangle();
+            rect.setWidth(BOARD_SIZE);
+            rect.setHeight(BOARD_SIZE);
+            rect.setFill(Color.TRANSPARENT);
+            rootPane.add(rect, 0,0);
+
+            // Keep computerMoving false until animation completes
+            // (preven user chip movement while animating)
+            trans.setOnFinished(e -> {
+                computerMoving = false;
+                rootPane.getChildren().remove(rect);
+
+                // Update board with chip moves
+                checkGameState();
+
+                if (checkersGame.isGameComplete()) {
+                    resetBoard();
+                }
+            });
+            trans.play();
+            
             // Place destination chip
             chipPane.add(newChip , move[1].y, move[1].x); 
-            // Update board with chip moves
-            checkGameState();
 
-            if (checkersGame.isGameComplete()) {
-                resetBoard();
-            }
+            // Check if chip  has reached other side.
+            checkKinged(newChip);
+            
 		}
-        computerMoving = false;
+        
         
     }
 
@@ -386,11 +436,13 @@ public class BoardGUI {
     /**
      * Allows user to exit the program
      */
-    private void submitActionEvent() {
-        submitButton.setOnAction(event -> {
+    private void closeActionEvent() {
+        closeButton.setOnAction(event -> {
             Platform.exit();
         });
     }
+
+    //private void windowClick(final )
 
     /**
      * Allow click drag on the main stage window
@@ -492,6 +544,9 @@ public class BoardGUI {
         // Store inital coordinates in scene
         initialX = me.getSceneX();
         initialY = me.getSceneY();
+        // Pull Chip to the top of the stage (z reference)
+        chipPane.getChildren().remove(chip);
+        chipPane.add(chip, (int)chip.getX(), (int)chip.getY());
     }
 
     /**
@@ -525,6 +580,8 @@ public class BoardGUI {
             chipPane.add(newChip, x, y);
             checkersGame.confirmMove(move);
 
+            checkKinged(newChip);
+
             checkGameState();
 
             if (checkersGame.isGameComplete()) {
@@ -534,6 +591,18 @@ public class BoardGUI {
             checkComputerMove();
         }
     }
+
+    /**
+     * Evaluete Chip for "kinged" status, increase size for king chip
+     * @param chip  Chip node to be evaluated
+     */
+    private void checkKinged(ImageView chip) {
+        if (checkersGame.checkKinged((int)chip.getX(), (int)chip.getY())) {
+            chip.setFitHeight(CHIP_SIZE*1.15);
+            chip.setFitWidth(CHIP_SIZE*1.15);
+        }
+    }
+
 
     /**
      * Generates String console-input equivalent of numeric array move locations
@@ -552,20 +621,28 @@ public class BoardGUI {
 
     /**
      * Helper Method for checkComputerMove to locate chip node in gridPane
-     * @param row       
-     * @param column    
-     * @param gridPane  
-     * @return          
+     * @param row       row value for node to return
+     * @param column    column value for node to return
+     * @param gridPane  Parent gridPane for child node
+     * @return          node at specified index of gridPane
      */ 
-    public Node getNodeByRowColumnIndex(final int row, final int column, GridPane gridPane) {
+    public Node getNodeByRowColumnIndex(int row, 
+                                        int column, 
+                                        GridPane gridPane) {
         Node result = null;
         ObservableList<Node> childrens = gridPane.getChildren();
     
         for (Node node : childrens) {
-            if(gridPane.getRowIndex(node) == row && gridPane.getColumnIndex(node) == column) {
-                result = node;
-                break;
+            // Gridlines active cause nullPointer
+            try {
+                if(GridPane.getRowIndex(node) == row 
+                    && GridPane.getColumnIndex(node) == column) {
+                    result = node;
+                    break;
+                }
+            } catch (NullPointerException e) {
             }
+            
         }
         return result;
     }

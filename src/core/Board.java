@@ -21,6 +21,13 @@ public class Board {
 	private Chip[][] state;
 
 
+	// Move Sets of King Checkers Pieces
+	private static final Point[] KING = { new Point(-1,-1), new Point(-1,1), 
+											new Point(1,-1), new Point(1,1) };
+	private static final Point[] KING_EXT = { new Point(-2,-2), new Point(-2,2), 
+											new Point(2,-2), new Point(2,2) };
+
+
 //-----------------------------------------------------------------------------
 //						 		CONSTRUCTOR
 //-----------------------------------------------------------------------------
@@ -71,9 +78,14 @@ public class Board {
 		//Move Chip to Destination
 		state[stateChange[1].x][stateChange[1].y] = 
 			state[stateChange[0].x][stateChange[0].y];
+		
+		// Check and update chip if King state met
+		kingChip(state[stateChange[1].x][stateChange[1].y], stateChange[1].x);
+		
 		//Remove Chip from Origin
 		state[stateChange[0].x][stateChange[0].y] = null;
 
+		// if attack remove opponent chip
 		if (stateChange.length > 2) {
 			for (int i = 2; i < stateChange.length; i++) {
 				state[stateChange[i].x][stateChange[i].y].getOwner().loseChip();
@@ -81,6 +93,21 @@ public class Board {
 			}
 		} 
 		return getCurrentState();
+	}
+
+
+	/**
+	 * Evaluate chip object for king status
+	 * @param x	Row location of chip to be checked
+	 * @param y	Column location of chip to be checked
+	 * @return	{@code true} if chip is King
+	 */
+	public boolean checkKinged(int x, int y) {
+		if (state[x][y] != null) {
+			return state[x][y].isKing();
+		} else {
+			return false;
+		}
 	}
 
 	/**
@@ -152,7 +179,7 @@ public class Board {
 		int size = activePlayer.getChips();
 		int count = 0;
 		// Array list of all moves Point[from][to]
-		Point[][] possibleMoves = new Point[size*8][8];
+		Point[][] possibleMoves = new Point[size*16][16];
 		// check every node on the board
 		for (int i = 0; i < this.size; i++) {
 			for (int j = 0; j < this.size; j++) {
@@ -195,6 +222,27 @@ public class Board {
 		}
 		if(!isValid) { return false; }
 		return true;
+	}
+
+
+//-----------------------------------------------------------------------------
+//						 		PRIVATE METHODS
+//-----------------------------------------------------------------------------
+	/**
+	 * Checks chip to update King status if chip has reached opposite side
+	 * @param chip	Chip to be evaluated
+	 * @param x		Row position on board
+	 */
+	private void kingChip(Chip chip, int x){
+		// if chip reached opposite of board, update chip to King.
+		if (chip.isKing() == true){
+		}
+		else if (chip.isKing() == false && chip.getType() == 'x' && x == 0 ){
+			chip.setKing(KING, KING_EXT);
+		}
+		else if (chip.isKing() == false && chip.getType() == 'o' && x == size-1){
+			chip.setKing(KING, KING_EXT);
+		} 
 	}
 	
 }

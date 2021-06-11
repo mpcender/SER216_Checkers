@@ -27,6 +27,8 @@ public class CheckersLogic {
 	private static final Point[] PLAIN_EXT_X = { new Point(-2,-2), new Point(-2,2) };
 	private static final Point[] PLAIN_O = { new Point(1,-1), new Point(1,1) };
 	private static final Point[] PLAIN_EXT_O = { new Point(2,-2), new Point(2,2) };
+
+	
 	
 	// All available piece types
 	private static final char[] PIECE_TYPES = { 'x', 'o' };
@@ -76,28 +78,16 @@ public class CheckersLogic {
 //-----------------------------------------------------------------------------
 	/**
 	 * CheckersLogic handles and executes the game logic of checkers
+	 * @param playerName		User defined player display names
+	 * @param computerOpponent	{@code true} if game is to be played with computer 
 	 */
 	public CheckersLogic(String[] playerName, boolean computerOpponent) {
 		this.players = new Player[MAX_PLAYERS];
 
 		// check if opponent is computer or human
 		if (computerOpponent) {
-			Random rand = new Random();
-			int i = rand.nextInt(2);
-
-			//System.out.println("start comp: " + computerOpponent + " rand: " + i);
-			// Coin toss who goes first
-			if (i < 1){ 
-				this.players[0] = 
-					new Player(playerName[0], 0, PLAYER_START_CHIPS, PIECE_TYPES[0], false);
-				this.players[1] = 
-					new CheckersComputerPlayer(playerName[1], 1, PLAYER_START_CHIPS, PIECE_TYPES[1], true);
-			} else {
-				this.players[0] = 
-					new CheckersComputerPlayer(playerName[1], 0, PLAYER_START_CHIPS, PIECE_TYPES[0], true);
-				this.players[1] = 
-					new Player(playerName[0], 1, PLAYER_START_CHIPS, PIECE_TYPES[1], false);
-			}
+			// Coin toss for chip assignment and turn order
+			randChipAssignment(playerName);
 		} else {
 			// Initialize players
 			for (int i = 0; i < MAX_PLAYERS; i++) {
@@ -106,6 +96,7 @@ public class CheckersLogic {
 			}
 		}
 	}
+
 
 //-----------------------------------------------------------------------------
 //						 		PUBLIC METHODS
@@ -200,7 +191,7 @@ public class CheckersLogic {
 	/**
 	 * Executes the players move to the board, toggles active player and 
 	 * clears active attack points.
-	 * @param movePoints
+	 * @param movePoints	validated origin and destination of move to confirm
 	 */
 	public void confirmMove(Point[] movePoints) {
 		// Record user move and update all relevant game states
@@ -296,6 +287,33 @@ public class CheckersLogic {
 //-----------------------------------------------------------------------------
 //						 		PRIVATE METHODS
 //-----------------------------------------------------------------------------
+	/**
+	 * If computer player, randomize which player goes first
+	 * @param playerName
+	 */
+	private void randChipAssignment(String[] playerName) {
+		Random rand = new Random();
+			int i = rand.nextInt(2);
+			
+			// Coin toss who goes first
+			if (i < 1){ 
+				this.players[0] = 
+					new Player(playerName[0], 0, 
+						PLAYER_START_CHIPS, PIECE_TYPES[0], false);
+				this.players[1] = 
+					new CheckersComputerPlayer(playerName[1], 1, 
+						PLAYER_START_CHIPS, PIECE_TYPES[1], true);
+			} else {
+				this.players[0] = 
+					new CheckersComputerPlayer(playerName[1], 0, 
+						PLAYER_START_CHIPS, PIECE_TYPES[0], true);
+				this.players[1] = 
+					new Player(playerName[0], 1, 
+						PLAYER_START_CHIPS, PIECE_TYPES[1], false);
+			}
+	}
+
+
 	/**
 	 * convert string to Point coordinates e.g., 3a-4b --> (2,0),(3,1)
 	 * @param playerMove	The user input indicating the location of the piece 
@@ -406,7 +424,21 @@ public class CheckersLogic {
 		// Execute
 		gameBoard.updateState(stateChange);
 	}
-
+	
+	/**
+	 * Evaluate chip at coordinates x y for kinged status
+	 * @param x	Column value
+	 * @param y	Row values
+	 * @return	{@code true} if king chip
+	 */
+	public boolean checkKinged(int x, int y) {
+		if (x >= 0 && x < SIZE && y >= 0 && y < SIZE) {
+			return gameBoard.checkKinged(y,x);
+		} else {
+			return false;
+		}
+		
+	}
 
 	/**
 	 * swaps the current activePlayer with inactive player

@@ -6,7 +6,7 @@
             "name" : "Debug (Launch)-App<Checkers>",
             "request": "launch",
             "mainClass": "${file}",
-            "vmArgs": "--module-path C:/Users/sephi/Desktop/ASU/SER216/Checkers/lib/javafx-sdk-11.0.2/lib --add-modules javafx.controls,javafx.fxml"
+            "vmArgs": "--module-path ${workspaceFolder}/lib/javafx-sdk-11.0.2/lib --add-modules javafx.controls,javafx.fxml"
         }
     ],
     "compounds": []

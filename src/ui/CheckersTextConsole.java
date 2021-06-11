@@ -49,13 +49,14 @@ public class CheckersTextConsole {
 
 
 
-/** 
- * Text Console Main Method
- * @param args
- */
+
 //-----------------------------------------------------------------------------
 //						 		MAIN METHOD
 //-----------------------------------------------------------------------------
+	/**
+	 * Text console main method
+	 * @param args default main arguments
+	 */
 	public static void main(String[] args) {
 		boolean gui = textOrGui();
 

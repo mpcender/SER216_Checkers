@@ -23,7 +23,7 @@ public class CheckersGUI extends Application  {
 	/** 
 	 * Build the initial stage
 	 * @param primaryStage	The main stage base
-	 * @throws Exception	
+	 * @throws Exception	Default exception required for JavaFX project
 	 */
 	@Override
     public void start(Stage primaryStage) throws Exception {

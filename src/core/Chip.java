@@ -16,20 +16,19 @@ public class Chip {
 //-----------------------------------------------------------------------------
 //						 		CLASS VARIABLES
 //-----------------------------------------------------------------------------
-	// an array of Point objects that store valid move offsets from current chip placement.
-	private final Point[] VALID_MOVE_SET;
-
-	// an array of Point objects that store extended move offsets from current chip placement.
-	private final Point[] EXTENDED_MOVE_SET;
-
-	private final Point[] ALL_MOVES;
-
 	// Player object that owns the chip object
 	private final Player OWNER;
 
 	private final char TYPE;
 
-	private final int NUM_MOVES;
+	// an array of Point objects that store valid move offsets from current chip placement.
+	private Point[] VALID_MOVE_SET;
+	// an array of Point objects that store extended move offsets from current chip placement.
+	private Point[] EXTENDED_MOVE_SET;
+
+	private Point[] ALL_MOVES;
+	private int NUM_MOVES;
+	private boolean isKing;
 
 //-----------------------------------------------------------------------------
 //						 		CONSTRUCTOR
@@ -52,17 +51,10 @@ public class Chip {
 		this.OWNER = owner;
 		this.TYPE = type;
 		this.NUM_MOVES = validMoveSet.length + extendedMoveSet.length;
+		this.isKing = false;
 
 		// collate movesets
-		int len = VALID_MOVE_SET.length + EXTENDED_MOVE_SET.length;
-		Point[] allMoves = new Point[len];
-		for (int i = 0; i < VALID_MOVE_SET.length; i++) {
-			allMoves[i] = VALID_MOVE_SET[i];
-		}
-		for (int i = VALID_MOVE_SET.length; i < len; i++) {
-			allMoves[i] = EXTENDED_MOVE_SET[i-VALID_MOVE_SET.length];
-		}
-		this.ALL_MOVES = allMoves;
+		collateMoves();
 	}
 
 
@@ -101,6 +93,25 @@ public class Chip {
 		return ALL_MOVES;
 	}
 	
+	/**
+	 * Updates chip to King and modifies chip with new King moveset
+	 * @param valid		New valid king moves
+	 * @param extended	New extended king moves
+	 */
+	public void setKing(Point[] valid, Point[] extended) {
+		this.VALID_MOVE_SET = valid;
+		this.EXTENDED_MOVE_SET = extended;
+		collateMoves();
+		this.isKing = true;
+	}
+
+	/**
+	 * Returns the chips King status
+	 * @return	{@code true} if chip is King
+	 */
+	public boolean isKing(){
+		return this.isKing;
+	}
 
 	/**
 	 * Determines if the provided offset is included in the chips valid 
@@ -133,5 +144,24 @@ public class Chip {
 			return false;
 		}
 		
+	}
+
+//-----------------------------------------------------------------------------
+//						 		PRIVATE METHODS
+//-----------------------------------------------------------------------------
+	/**
+	 * Method combines given movesets for valid chip move evaluations
+	 * Standard Valid moves at front, extended moves at back.
+	 */
+	private void collateMoves() {
+		int len = VALID_MOVE_SET.length + EXTENDED_MOVE_SET.length;
+		Point[] allMoves = new Point[len];
+		for (int i = 0; i < VALID_MOVE_SET.length; i++) {
+			allMoves[i] = VALID_MOVE_SET[i];
+		}
+		for (int i = VALID_MOVE_SET.length; i < len; i++) {
+			allMoves[i] = EXTENDED_MOVE_SET[i-VALID_MOVE_SET.length];
+		}
+		this.ALL_MOVES = allMoves;
 	}
 }
